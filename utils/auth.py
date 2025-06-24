@@ -5,7 +5,7 @@ import json
 
 # Load credentials from Streamlit secrets
 if not firebase_admin._apps:
-    cred_dict = json.loads(st.secrets["FIREBASE_KEY"])
+   cred_dict = st.secrets["FIREBASE_KEY"]  # ✅ correct
     cred = credentials.Certificate(cred_dict)
     firebase_app = firebase_admin.initialize_app(cred)
 else:
