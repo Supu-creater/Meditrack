@@ -22,20 +22,22 @@ else:
         st.subheader("Enter Today's Data:")
 
         ipd_count = number_input_text("1️⃣ Total IPD for the day (as per HMIS Portal)")
-        beneficiary_count = number_input_text("2️⃣ Total number of beneficiaries registered on HMIS Portal")
-        receipts = number_input_text("3️⃣ Total receipts amount (₹)")
-        penalty_cases = number_input_text("4️⃣ Penalty beneficiaries on patients for treatment delay")
-        rsa_patients = number_input_text("5️⃣ Total number of RSA patients in bed (incl. side/emergency/discharge)")
-        aor_patients = number_input_text("6️⃣ Out of total RSA, patients against own risk (AOR)")
+        opd_count = number_input_text("2️⃣ Total OPD for the day (as per HMIS Portal)")  # ✅ NEW
+        beneficiary_count = number_input_text("3️⃣ Total number of beneficiaries registered on HMIS Portal")
+        receipts = number_input_text("4️⃣ Total receipts amount (₹)")
+        penalty_cases = number_input_text("5️⃣ Penalty beneficiaries on patients for treatment delay")
+        rsa_patients = number_input_text("6️⃣ Total number of RSA patients in bed (incl. side/emergency/discharge)")
+        aor_patients = number_input_text("7️⃣ Out of total RSA, patients against own risk (AOR)")
 
         # Submit only if all are valid (None not in any)
         if st.button("Submit"):
-            if None in (ipd_count, beneficiary_count, receipts, penalty_cases, rsa_patients, aor_patients):
+            if None in (ipd_count, opd_count, beneficiary_count, receipts, penalty_cases, rsa_patients, aor_patients):
                 st.error("Please fill all fields correctly before submitting.")
             else:
                 add_data(
                     user_id=st.session_state['user_id'],
                     ipd_count=ipd_count,
+                    opd_count=opd_count,  # ✅ Added to data
                     beneficiary_count=beneficiary_count,
                     receipts=receipts,
                     penalty_cases=penalty_cases,
