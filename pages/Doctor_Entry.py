@@ -4,13 +4,13 @@ from utils.db import get_daily_data, add_data
 
 st.title("Daily Doctor Entry Form")
 
-# Function to allow typing numbers only
-def number_input_text(label):
-    value = st.text_input(label)
-    if value and not value.isdigit():
-        st.warning(f"Please enter a valid number for: {label}")
-        return None
-    return int(value) if value else 0
+# Numeric input with built-in number_input
+def number_input(label):
+    return st.number_input(label, min_value=0, step=1, format="%d")
+
+# Alphabetic input (free text)
+def text_input(label):
+    return st.text_area(label)
 
 if 'user_id' not in st.session_state:
     st.error("Please login first!")
@@ -21,27 +21,38 @@ else:
     else:
         st.subheader("Enter Today's Data:")
 
-        ipd_count = number_input_text("1️⃣ Total IPD for the day (as per HMIS Portal)")
-        opd_count = number_input_text("2️⃣ Total OPD for the day (as per HMIS Portal)")  # ✅ NEW
-        beneficiary_count = number_input_text("3️⃣ Total number of beneficiaries registered on HMIS Portal")
-        receipts = number_input_text("4️⃣ Total receipts amount (₹)")
-        penalty_cases = number_input_text("5️⃣ Penalty beneficiaries on patients for treatment delay")
-        rsa_patients = number_input_text("6️⃣ Total number of RSA patients in bed (incl. side/emergency/discharge)")
-        aor_patients = number_input_text("7️⃣ Out of total RSA, patients against own risk (AOR)")
+        # 1. No. of OPD cases
+        opd_cases = number_input("1️⃣ No. of OPD cases")
 
-        # Submit only if all are valid (None not in any)
+        # 2. No. of procedures done
+        procedure_count = number_input("2️⃣ No. of procedures done")
+
+        # 3. Procedure-wise details
+        procedure_details = text_input("3️⃣ Procedure-wise details")
+
+        # 4. Whether any surgery performed today?
+        surgery_performed = st.radio("4️⃣ Whether any surgery performed today?", ["Yes", "No"])
+
+        # 5. No. of surgeries performed (conditional)
+        if surgery_performed == "Yes":
+            surgery_count = number_input("5️⃣ No. of surgeries performed")
+            surgery_details = text_input("6️⃣ Details of surgeries")
+        else:
+            surgery_count = 0
+            surgery_details = ""
+
+        # Submit button
         if st.button("Submit"):
-            if None in (ipd_count, opd_count, beneficiary_count, receipts, penalty_cases, rsa_patients, aor_patients):
-                st.error("Please fill all fields correctly before submitting.")
+            if not procedure_details.strip() or (surgery_performed == "Yes" and not surgery_details.strip()):
+                st.error("Please fill in all required text fields.")
             else:
                 add_data(
                     user_id=st.session_state['user_id'],
-                    ipd_count=ipd_count,
-                    opd_count=opd_count,  # ✅ Added to data
-                    beneficiary_count=beneficiary_count,
-                    receipts=receipts,
-                    penalty_cases=penalty_cases,
-                    rsa_patients=rsa_patients,
-                    aor_patients=aor_patients
+                    opd_cases=opd_cases,
+                    procedure_count=procedure_count,
+                    procedure_details=procedure_details,
+                    surgery_performed=surgery_performed,
+                    surgery_count=surgery_count,
+                    surgery_details=surgery_details
                 )
                 st.success("Data saved successfully!")
