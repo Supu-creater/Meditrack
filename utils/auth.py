@@ -4,7 +4,7 @@ import streamlit as st
 
 # Load credentials from Streamlit secrets
 if not firebase_admin._apps:
-    cred_dict = st.secrets["FIREBASE_KEY"]  # ✅ Already a dictionary (AttrDict)
+    cred_dict = dict(st.secrets["FIREBASE_KEY"])  # ✅ convert AttrDict to plain dict
     cred = credentials.Certificate(cred_dict)
     firebase_app = firebase_admin.initialize_app(cred)
 else:
