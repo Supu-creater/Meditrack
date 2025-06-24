@@ -11,18 +11,21 @@ if not firebase_admin._apps:
 db = firestore.client()
 
 # ✅ Your existing functions below...
-def add_data(user_id, ipd_count, beneficiary_count, receipts, penalty_cases, rsa_patients, aor_patients):
-    doc_ref = db.collection("entries").document()
-    doc_ref.set({
+def add_data(user_id, ipd_count, opd_count, beneficiary_count, receipts, penalty_cases, rsa_patients, aor_patients):
+    from firebase_admin import firestore
+    db = firestore.client()
+    db.collection("entries").add({
         "user_id": user_id,
+        "timestamp": datetime.now(timezone.utc),
         "ipd_count": ipd_count,
+        "opd_count": opd_count,  # ✅ Save to DB
         "beneficiary_count": beneficiary_count,
         "receipts": receipts,
         "penalty_cases": penalty_cases,
         "rsa_patients": rsa_patients,
-        "aor_patients": aor_patients,
-        "timestamp": datetime.now()
+        "aor_patients": aor_patients
     })
+
 
 def get_daily_data(user_id):
     docs = db.collection("entries").where("user_id", "==", user_id).stream()
