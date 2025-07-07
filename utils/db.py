@@ -1,10 +1,13 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime, timezone
+import streamlit as st
+import json
 
-# Initialize Firebase only once
+# Initialize Firebase using secrets
 if not firebase_admin._apps:
-    cred = credentials.Certificate("firebase-creds.json")  # 🔁 Change path if needed
+    cred_dict = json.loads(st.secrets["FIREBASE_KEY"])
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
 
 # Firestore client
@@ -54,3 +57,4 @@ def get_daily_data(user_id):
     except Exception as e:
         print(f"⚠️ Error fetching daily data for {user_id}: {e}")
         return None
+
