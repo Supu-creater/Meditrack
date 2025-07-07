@@ -6,7 +6,7 @@ import json
 
 # Initialize Firebase using secrets
 if not firebase_admin._apps:
-    cred_dict = json.loads(st.secrets["FIREBASE_KEY"])
+    cred_dict = st.secrets["FIREBASE_KEY"]
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
 
